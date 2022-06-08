@@ -144,6 +144,7 @@ input:not(:focus):valid ~ .floating-label {
   position: relative;
   margin-top: 15px;
   margin-bottom: 25px;
+  display: flex;
 }
 
 #SignUpButton {
@@ -175,4 +176,26 @@ i.password::before{
 
 i.username::before{
   content: '\e853';
+}
+
+.form-control{
+  padding-right: 37px;
+}
+
+.material{
+  position: absolute;
+  right: 8px;
+  top: 6px;
+}
+
+.signIn-visit{
+  color: #000;
+  text-decoration: none;
+}
+
+.show-password{
+  background: none;
+  border: none;
+  position: absolute;
+  right: 0px;
 }
