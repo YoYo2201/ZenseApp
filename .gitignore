@@ -7,7 +7,7 @@
 
 # testing
 /coverage
-
+/backend/zense-app.json
 # production
 /build
 
