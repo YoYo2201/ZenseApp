@@ -8,9 +8,19 @@ import './App.css';
 function App() {
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
+   
+  const Navigator = (position, replace) => {  
+    navigate(position, { replace: replace })
+  }
 
   const setLoad = (value) => {
     setLoading(value);
+  }
+
+  const setRegisterData = (data) => {
+    setData(data);
   }
 
  const handleAlert = (flag, msg) => {
@@ -39,8 +49,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route exact path="/" element={<SignUp alert={alert} alertFunc={handleAlert} loading={loading} setLoad={setLoad}/>}></Route>
-        <Route exact path="/sign-in" element={<SignIn alert={alert} alertFunc={handleAlert} loading={loading} setLoad={setLoad}/>}></Route>
+        <Route exact path="/" element={<SignUp alert={alert} alertFunc={handleAlert} loading={loading} setLoad={setLoad} navigate={Navigator}/>}></Route>
+        <Route exact path="/sign-in" element={<SignIn alert={alert} alertFunc={handleAlert} loading={loading} setLoad={setLoad} setDataFunc={setRegisterData} navigate={Navigator}/>}></Route>
       </Routes>
     </div>
   );

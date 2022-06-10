@@ -3,10 +3,13 @@ import { Link } from "react-router-dom";
 import "./SignUp.css";
 import Alert from './Alert';
 import Spinner from './Spinner';
+import data from './URL.json';
 
 export default function SignUp(props) {
   const [show, setStatus] = useState("visibility");
   const [confirm, setStatusConfirm] = useState("visibility");
+  const [disable, setDisable] = useState(false);
+  const URL = data.URL;
   
   function setHeight() {
     let cont = document.getElementById("signUpID");
@@ -15,7 +18,7 @@ export default function SignUp(props) {
   }
 
   const PasswordHandle = () => {
-    let x = document.getElementById("form1Example3");
+    let x = document.getElementById("password");
     if (x.type === "password") {
       x.type = "text";
       setStatus("visibility_off");
@@ -26,7 +29,7 @@ export default function SignUp(props) {
   };
 
   const ConfirmPasswordHandle = () => {
-    let x = document.getElementById("form1Example4");
+    let x = document.getElementById("confirm-password");
     if (x.type === "password") {
       x.type = "text";
       setStatusConfirm("visibility_off");
@@ -36,9 +39,52 @@ export default function SignUp(props) {
     }
   };
 
-  function testfunction(){
-    // props.setLoad(true);
-    props.alertFunc('success', 'OTP Sent Successfully!!!');
+  async function SignUp(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    if(password !== confirmPassword)
+    {
+      props.alertFunc('danger', 'Passwords do not match!');
+    }
+    else{
+      setDisable(true);
+      const PORT = process.env.PORT || 5000;
+      let url = process.env.NODE_ENV === 'production' ? 'https://firechat2201.herokuapp.com/api/sendOTP' : `${URL}:${PORT}/api/signUp`
+      props.setLoad(true);
+      const result = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          username,
+          password
+        }),
+      }).then((res) => res.json());
+
+      props.setLoad(false);
+      if (result.status === "ok") {
+        props.alertFunc('success', 'Registration Successful!!!');
+        props.navigate('/sign-in', true);
+      } else if(result.status === "Exists"){
+        setDisable(false);
+        props.alertFunc('danger', "Username Already Exists!!!");
+      }
+      else
+      {
+        setDisable(false);
+        props.alertFunc('danger', "Some Error Occurred! Try Again");
+      }
+    }
+  }
+
+  function Submit() {
+    const form = document.getElementById('reg-form')
+		form.addEventListener('submit', SignUp)
   }
 
   window.addEventListener("resize", setHeight);
@@ -64,16 +110,16 @@ export default function SignUp(props) {
             <p id="text3">Zense</p>
           </div>
           <div className="SignUpFormCont">
-            <form>
+            <form id='reg-form'>
               <div class="form-outline mb-4">
                 <input
                   type="email"
-                  id="form1Example1"
+                  id="email"
                   class="form-control"
                   autofocus
                   required
                 />
-                <label class="floating-label" for="form1Example1">
+                <label class="floating-label" for="email">
                   Email address
                 </label>
                 <div className="material"><i className="email material-icons"></i></div>
@@ -81,12 +127,12 @@ export default function SignUp(props) {
               <div class="form-outline mb-4">
                 <input
                   type="text"
-                  id="form1Example2"
+                  id="username"
                   class="form-control"
                   autofocus
                   required
                 />
-                <label class="floating-label" for="form1Example2">
+                <label class="floating-label" for="username">
                   User name
                 </label>
                 <div className="material"><i className="username material-icons"></i></div>
@@ -94,14 +140,14 @@ export default function SignUp(props) {
               <div class="form-outline mb-4">
                 <input
                   type="password"
-                  id="form1Example3"
+                  id="password"
                   class="form-control"
                   autoComplete="new-password"
                   minLength={8}
                   autofocus
                   required
                 />
-                <label class="floating-label" for="form1Example3">
+                <label class="floating-label" for="password">
                   Password
                 </label>
                 <div className="material">
@@ -116,14 +162,14 @@ export default function SignUp(props) {
               <div class="form-outline mb-4">
                 <input
                   type="password"
-                  id="form1Example4"
+                  id="confirm-password"
                   class="form-control"
                   autoComplete="new-password"
                   minLength={8}
                   autofocus
                   required
                 />
-                <label class="floating-label" for="form1Example4">
+                <label class="floating-label" for="confirm-password">
                   Confirm Password
                 </label>
                 <div className="material">
@@ -140,6 +186,8 @@ export default function SignUp(props) {
                 type="submit"
                 class="btn btn-primary btn-block"
                 id="SignUpButton"
+                disabled={disable}
+                onClick={Submit}
               >
                 Sign Up
               </button>
@@ -150,14 +198,6 @@ export default function SignUp(props) {
                 </Link>
               </div>
             </form>
-            <button
-                type="button"
-                class="btn btn-primary btn-block"
-                id="SignUpButton"
-                onClick={testfunction}
-              >
-                Test Button
-              </button>
           </div>
         </div>
       </div>
